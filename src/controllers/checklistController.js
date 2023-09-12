@@ -1,9 +1,10 @@
 import checklist from '../models/checklist.js';
+import { task } from '../models/task.js';
 
 class ChecklistController {
   static async getChecklists(req, res) {
     try {
-      const checklists = await Checklist.find({});
+      const checklists = await checklist.find({});
       res.status(200).json(checklists);
     } catch (err) {
       res
@@ -15,7 +16,7 @@ class ChecklistController {
   static async getOneChecklist(req, res) {
     try {
       const id = req.params.id;
-      const checklist = await Checklist.findById(id);
+      const checklist = await checklist.findById(id);
       res.status(200).json(checklist);
     } catch (err) {
       res
@@ -25,11 +26,21 @@ class ChecklistController {
   }
 
   static async postChecklist(req, res) {
+    const newChecklist = req.body;
+
     try {
-      const newChecklist = await checklist.create(req.body);
+      const taskFind = await task.findById(newChecklist.tasks);
+
+      const checklistCompleto = {
+        ...newChecklist,
+        tasks: { ...taskFind._doc },
+      };
+
+      const checklistCriado = await checklist.create(checklistCompleto);
+
       res.status(201).json({
         message: 'Criado com sucesso',
-        checklist: newChecklist,
+        checklist: checklistCriado,
       });
     } catch (err) {
       res
@@ -41,7 +52,7 @@ class ChecklistController {
   static async updateChecklist(req, res) {
     try {
       const id = req.params.id;
-      await Checklist.findByIdAndUpdate(id, req.body);
+      await checklist.findByIdAndUpdate(id, req.body);
       res.status(200).json({ message: 'Atualizado com sucesso' });
     } catch (err) {
       res
@@ -53,7 +64,7 @@ class ChecklistController {
   static async deleteChecklist(req, res) {
     try {
       const id = req.params.id;
-      await Checklist.findByIdAndDelete(id);
+      await checklist.findByIdAndDelete(id);
       res.status(200).json({ message: 'excluido com sucesso' });
     } catch (err) {
       res

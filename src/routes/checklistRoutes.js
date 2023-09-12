@@ -1,16 +1,16 @@
 import express from 'express';
-import ChecklistController from '../controllers/checklistController.js';
+import checklistController from '../controllers/checklistController.js';
 
 const routes = express.Router();
 
-routes.get('/checklist', ChecklistController.getChecklists);
+routes.get('/checklists', checklistController.getChecklists);
 
-routes.get('/checklist/:id', ChecklistController.getOneChecklist);
+routes.get('/checklist/:id', checklistController.getOneChecklist);
 
-routes.post('/checklist', ChecklistController.postChecklist);
+routes.post('/checklist', checklistController.postChecklist);
 
-routes.put('/checklist/:id', ChecklistController.updateChecklist);
+routes.put('/checklist/:id', checklistController.updateChecklist);
 
-routes.delete('/checklist/:id', ChecklistController.deleteChecklist);
+routes.delete('/checklist/:id', checklistController.deleteChecklist);
 
 export default routes;

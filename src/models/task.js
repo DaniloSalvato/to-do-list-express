@@ -2,16 +2,15 @@ import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
-const taskSchema = Schema({
-  name: { type: String, required: true },
-  done: { type: Boolean, default: false },
-  checklist: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Checklist',
-    required: true,
+const taskSchema = new Schema(
+  {
+    id: { type: mongoose.Schema.Types.ObjectId },
+    descricao: { type: String },
+    done: { type: Boolean, default: false },
   },
-});
+  { versionKey: false }
+);
 
-const Task = model('todo-list', taskSchema, 'Task');
+const task = model('task', taskSchema);
 
-export default Task;
+export { task, taskSchema };

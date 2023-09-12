@@ -1,18 +1,17 @@
 import mongoose from 'mongoose';
+import { taskSchema } from './task.js';
 
 const { Schema, model } = mongoose;
 
-const checklistSchema = new Schema({
-  id: { type: mongoose.Schema.Types.ObjectId },
-  name: { type: String, required: true },
-  tasks: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Task',
-    },
-  ],
-});
+const checklistSchema = new Schema(
+  {
+    id: { type: mongoose.Schema.Types.ObjectId },
+    name: { type: String, required: true },
+    tasks: taskSchema,
+  },
+  { versionKey: false }
+);
 
-const Checklist = model('todo-list', checklistSchema, 'Checklist');
+const checklist = model('checklist', checklistSchema);
 
-export default Checklist;
+export default checklist;
