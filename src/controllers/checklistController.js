@@ -1,31 +1,34 @@
-import checklist from '../models/checklist.js';
-import { task } from '../models/task.js';
+import NotFound from "../error/NotFound.js";
+import checklist from "../models/checklist.js";
+import { task } from "../models/task.js";
 
 class ChecklistController {
-  static async getChecklists(req, res) {
+  static async getChecklists(req, res, next) {
     try {
-      const checklists = await checklist.find({});
-      res.status(200).json(checklists);
+      const checklistFind = checklist.find();
+      req.result = checklistFind;
+      next();
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: `${err.message} - falha ao listar o checklist.` });
+      next(err);
     }
   }
 
-  static async getOneChecklist(req, res) {
+  static async getOneChecklist(req, res, next) {
     try {
       const id = req.params.id;
-      const checklist = await checklist.findById(id);
-      res.status(200).json(checklist);
+      const checklistFind = await checklist.findById(id);
+
+      if (checklistFind !== null) {
+        res.status(200).json(checklistFind);
+      } else {
+        next(new NotFound("Falha ao listar o Id do checklist."));
+      }
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: `${err.message} - falha ao listar o checklist.` });
+      next(err);
     }
   }
 
-  static async postChecklist(req, res) {
+  static async postChecklist(req, res, next) {
     const newChecklist = req.body;
 
     try {
@@ -39,37 +42,31 @@ class ChecklistController {
       const checklistCriado = await checklist.create(checklistCompleto);
 
       res.status(201).json({
-        message: 'Criado com sucesso',
+        message: "Criado com sucesso",
         checklist: checklistCriado,
       });
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: `${err.message} - falha ao cadastrar o checklist.` });
+      next(err);
     }
   }
 
-  static async updateChecklist(req, res) {
+  static async updateChecklist(req, res, next) {
     try {
       const id = req.params.id;
       await checklist.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: 'Atualizado com sucesso' });
+      res.status(200).json({ message: "Atualizado com sucesso" });
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: `${err.message} - falha ao listar o checklist.` });
+      next(err);
     }
   }
 
-  static async deleteChecklist(req, res) {
+  static async deleteChecklist(req, res, next) {
     try {
       const id = req.params.id;
       await checklist.findByIdAndDelete(id);
-      res.status(200).json({ message: 'excluido com sucesso' });
+      res.status(200).json({ message: "excluido com sucesso" });
     } catch (err) {
-      res
-        .status(500)
-        .json({ message: `${err.message} - falha ao listar o checklist.` });
+      next(err);
     }
   }
 }
